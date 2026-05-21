@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Balance {
+  id           String   @id @default(cuid())
+  employeeId   String
+  locationId   String
+  balance      Float
+  version      Int      @default(0)
+  lastSyncedAt DateTime @default(now())
+
+  @@unique([employeeId, locationId])
+}
+
+model TimeOffRequest {
+  id             String   @id @default(cuid())
+  employeeId     String
+  locationId     String
+  daysRequested  Float
+  status         String
+  idempotencyKey String?  @unique
+  createdAt      DateTime @default(now())
+}
+
+model BalanceLedger {
+  id         String   @id @default(cuid())
+  employeeId String
+  locationId String
+  delta      Float
+  eventType  String
+  requestId  String?
+  createdAt  DateTime @default(now())
+}
